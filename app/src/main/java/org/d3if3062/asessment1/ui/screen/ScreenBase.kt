@@ -50,6 +50,18 @@ enum class BottomNavigationScreen(
     HISTORY("History", R.drawable.history, R.string.history)
 }
 
+enum class zoo(
+    val nama: String,
+    val jenis: String,
+    val jenisMakanan: String
+) {
+    KUCING("Kucing", "Mamalia", "Karnivora"),
+    KELINCI("Kelinci", "Mamalia", "Herbivora"),
+    KERBAU("Kerbau", "Mamalia", "Herbivora")
+
+}
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupNavGraph(navController: NavHostController = rememberNavController()) {

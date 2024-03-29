@@ -1,5 +1,7 @@
 package org.d3if3062.asessment1.ui.screen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
@@ -41,6 +43,7 @@ import org.d3if3062.asessment1.navigation_controller.NaviationGraph
 import org.d3if3062.asessment1.navigation_controller.Screen
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupNavGraphOld(navController: NavHostController = rememberNavController()) {

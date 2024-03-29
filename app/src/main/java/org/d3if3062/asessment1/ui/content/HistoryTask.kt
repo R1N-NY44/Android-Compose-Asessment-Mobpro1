@@ -9,9 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,21 +24,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import org.d3if3062.asessment1.R
 import org.d3if3062.asessment1.model.ListTaskModel
 import org.d3if3062.asessment1.model.TodoList
 
 @Composable
-fun HistoryTaskScreen() {
-    val viewModel: ListTaskModel = viewModel()
-    val data = viewModel.data //emptyList<TodoList>()
-    val context = LocalContext.current
+fun HistoryTaskScreen(navController: NavHostController, viewModel: ListTaskModel){
+    val allTasks by remember { viewModel.getAllTasks() }.observeAsState(initial = emptyList())
 
-    if (data.isEmpty()){
-        Column (
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+    val incompleteTasks = allTasks.filter { it.status } // Filter hanya tugas dengan status false
+
+    if (incompleteTasks.isEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -42,44 +45,13 @@ fun HistoryTaskScreen() {
         }
     } else {
         LazyColumn(
-            Modifier
-                .fillMaxSize(),
-            //.padding(16.dp)
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 84.dp)
         ) {
-            items(data){
-                ListItem(todolist = it) {
-//                    val pesan = context.getString(R.string.x_diklik, it.judul)
-//                    Toast.makeText(context, pesan, Toast.LENGTH_SHORT).show()
-                }
+            items(incompleteTasks) { todo ->
+                ListItem(navController, todo) { }
                 Divider()
             }
         }
-    }
-}
-
-@Composable
-fun ListHistoryItem(todolist: TodoList, onClick: () -> Unit){
-    Column (
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text(
-            text = todolist.judul,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = todolist.description,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(
-            text = todolist.deadLine
-        )
     }
 }
