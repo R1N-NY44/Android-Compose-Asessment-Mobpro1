@@ -1,3 +1,46 @@
 <resources>
-    <string name="app_name">Asessment1</string>
+    <string name="app_name">Todo Apps</string>
+
+/////////////////////////////////[Divider for Application Button/Icon/Hint]/////////////////////////////////
+
+    //Navigation Button
+    //for navigation button (task, history, about_dev, light_mode, dark_mode, add_task)
+    <string name="task">Task</string>
+    <string name="history">History</string>
+    <string name="about_dev">About Dev</string>
+    <string name="light_mode">Switch to Light Mode</string>
+    <string name="dark_mode">Switch to Dark Mode</string>
+    <string name="add_task">Add Task</string>
+
+    //Navigation Control
+    //for navigation control (edit, delete, save, done, back)
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
+    <string name="done">done</string>
+    <string name="back">Back</string>
+
+    //Naviagation Hint
+    <string name="empty_input">Cannot be empty</string>
+
+
+    //Navigation Title
+    //for navigation title (add_task_title, edit_task_title, history_title, about_dev_title)
+    <string name="add_task_title">Add Task</string>
+    <string name="edit_task_title">Edit Task</string>
+    <string name="history_title">History</string>
+    <string name="about_dev_title">About Dev</string>
+
+/////////////////////////////////[Divider for Application Text]/////////////////////////////////
+
+    //Exception Text
+    //for exception text (list_kosong, tambah_error)
+    <string name="list_kosong">Belum ada data</string>
+    <string name="tambah_error">Belum bisa tambah catatan.</string>
+    <string name="invalid_input">Tidak boleh kosong</string>
+
+    //Lorem Ipsum
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+
+
 </resources>
