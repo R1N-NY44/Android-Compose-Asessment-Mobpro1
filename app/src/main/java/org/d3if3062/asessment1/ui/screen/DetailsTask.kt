@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -111,9 +113,14 @@ fun DetalsTask(navController: NavHostController, viewModel: ListTaskModel, taskI
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {navController.navigate(Screen.EditTask.withTaskId(taskId))}
-            ) { Icon(Icons.Default.Edit, contentDescription = stringResource(id = R.string.edit)) }
+            ExtendedFloatingActionButton(
+                modifier = Modifier.padding(bottom = 5.dp),
+                text = { Text(stringResource(id = R.string.edit_task)) },
+                icon = { Icon(Icons.Default.Edit, contentDescription = stringResource(id = R.string.edit)) },
+                onClick = {
+                    navController.navigate(Screen.EditTask.withTaskId(taskId))
+                }
+            )
         }
     ) { paddingValues ->
         Box(

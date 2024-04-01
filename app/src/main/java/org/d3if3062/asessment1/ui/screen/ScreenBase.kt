@@ -199,7 +199,10 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
                             },
                             navigationIcon = {
                                 //Niatnya dibuatkan agar bisa mendeteksi mode hp (dark/light),  kemudian jika di tekan akan merubah mode aplikasi ke dark/light, Upcoming feature
-                                IconButton(onClick = { /*TODO*/ })
+                                IconButton(onClick = {
+                                    val text = context.getString(R.string.upcoming_feature)
+                                    Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                                })
                                 {
                                     Icon(
                                         painter = painterResource(id = R.drawable.dark_mode),

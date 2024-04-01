@@ -11,7 +11,8 @@
     /<string name="git_button">GitHub Profile</string>
     /<string name="instagram_button">Instagram Profile</string>
     /<string name="instagram_URL">Developer Doesn\'t have Instagram</string>
-    /<string name="copy_right">Copyright © 2024\n Brindawan Yoga AKA R1N-NY44</string>
+    <string name="upcoming_feature">Upcoming Feature</string>
+    /<string name="copy_right">v1.4.2 Copyright ©2024\n Brindawan Yoga AKA R1N-NY44</string>
     /<string name="share_Todo">%1$s\nDue Date: %2$s\nDescription: %3$s\n\nShared from Todo Apps</string>
 
 
@@ -41,6 +42,7 @@
     //Navigation Title
     //for navigation title (add_task_title, edit_task_title, history_title, about_dev_title)
     /<string name="add_task_title">Add Task</string>
+    <string name="edit_task">Edit Task</string>
     /<string name="edit_task_title">Confirm Edit Task</string>
     /<string name="detail_task_title">Detail Task</string>
 <!--    <string name="history_title">History</string>-->

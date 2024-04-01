@@ -7,7 +7,7 @@
     <string name="git_button">Profil GitHub</string>
     <string name="instagram_button">Profil Instagram</string>
     <string name="instagram_URL">Pengembang tidak memiliki Instagram</string>
-    <string name="copy_right">Hak Cipta © 2024\n Brindawan Yoga AKA R1N-NY44</string>
+    <string name="copy_right">v1.4.2 Hak Cipta ©2024\n Brindawan Yoga AKA R1N-NY44</string>
     <string name="share_Todo">%1$s\nTanggal Berakhir: %2$s\nDeskripsi: %3$s\n\nDibagikan dari Aplikasi Pencatatan Tugas</string>
     <string name="task">Tugas</string>
     <string name="history">Riwayat</string>
@@ -32,4 +32,6 @@
     <string name="empty_list">Data Kosong</string>
     <string name="invalid_input">Tidak boleh kosong</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elite, sed do eiusmod tempor incididunt ut labore dan dolore magna aliqua. Dengan sedikit racun, yang merupakan latihan keras yang tidak bisa dilakukan oleh orang lain sebagai konsekuensinya. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Kecuali sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="edit_task">Edit Tugas</string>
+    <string name="upcoming_feature">Fitur Belum Tersedia</string>
 </resources>
