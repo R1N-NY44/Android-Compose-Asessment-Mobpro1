@@ -2,11 +2,9 @@ package org.d3if3062.asessment1.model
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -23,7 +21,7 @@ class ListTaskModel : ViewModel() {
     // Method untuk menambahkan data baru
     @RequiresApi(Build.VERSION_CODES.O)
     fun addTodo(
-        judul: String,
+        title: String,
         deadLine: String,
         description: String,
         status: Boolean
@@ -41,7 +39,7 @@ class ListTaskModel : ViewModel() {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yy - (HH.mm)")
         val formattedDateTime = createAt.format(formatter)
 
-        val newData = currentData + TodoList(newId, judul, deadLine, description, status, formattedDateTime)
+        val newData = currentData + TodoList(newId, title, deadLine, description, status, formattedDateTime)
         _data.value = newData
     }
 
@@ -51,15 +49,14 @@ class ListTaskModel : ViewModel() {
     }
 
     // Metode untuk menandai tugas sebagai selesai
-    fun markTaskAsCompleted(taskId: Long) {
+    fun markTask(taskId: Long) {
         val updatedTasks = _data.value.orEmpty().map { task ->
             if (task.id == taskId) {
-                task.copy(status = true)
+                task.copy(status = !task.status)
             } else {
                 task
             }
         }
-
         _data.value = updatedTasks
     }
 
@@ -92,16 +89,15 @@ class ListTaskModel : ViewModel() {
         return data
     }
 
-
     // Membuat data dummy
     private fun getDataDummy(): List<TodoList> {
         val data = mutableListOf<TodoList>()
-        for (i in 2 downTo 1) {
+        for (i in 3 downTo 1) {
             data.add(
                 TodoList(
                     id = i.toLong(),
-                    judul = "Kuliah Mobpro $i",
-                    deadLine = "0$i/0$i/2024 - (2$i.59)",
+                    title = "Kuliah Mobpro $i",
+                    deadLine = "0$i/0$i/2024 2$i:2$i",
                     description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                     status = false,
                     createAt = "0$i/0$i/2024 - (2$i.59)"

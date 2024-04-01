@@ -12,11 +12,12 @@ import org.d3if3062.asessment1.model.ListTaskModel
 import org.d3if3062.asessment1.ui.content.HistoryTaskScreen
 import org.d3if3062.asessment1.ui.screen.AddTaskScreen
 import org.d3if3062.asessment1.ui.content.ListTaskScreen
-import org.d3if3062.asessment1.ui.screen.AnimalApp
-import org.d3if3062.asessment1.ui.screen.DetailsTaskScreen
+import org.d3if3062.asessment1.ui.screen.DetalsTask
 import org.d3if3062.asessment1.ui.screen.EditTaskScreen
+//import org.d3if3062.asessment1.ui.screen.Experiment2
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NaviationGraph(navController: NavHostController = rememberNavController(), viewModel: ListTaskModel = viewModel())  {
     NavHost(
@@ -33,13 +34,20 @@ fun NaviationGraph(navController: NavHostController = rememberNavController(), v
             //AnimalApp()
         }
 
+//        composable(route = Screen.Experiment.route) {
+//            Experiment2()
+//            //AnimalApp()
+//        }
+
+
+
         /*----------------[Sub Route]----------------*/
 
         composable(route = Screen.DetailsTask.route) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getString("taskId")?.toLongOrNull()
             taskId?.let { id ->
                 println("Task ID in DetailsTask route: $id") // Mencetak nilai ID untuk memastikan tidak null
-                DetailsTaskScreen(navController, viewModel, id)
+                DetalsTask(navController, viewModel, id)
             } ?: run {
                 println("Failed to get Task ID in DetailsTask route")
             }

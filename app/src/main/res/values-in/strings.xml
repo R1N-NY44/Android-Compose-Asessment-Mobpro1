@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aplikasi Pencatatan Tugas</string>
+    <string name="about_dev">Tentang Pengembang</string>
+    <string name="github_URL">https://github.com/R1N-NY44</string>
+    <string name="git_username">R1N-NY44</string>
+    <string name="git_button">Profil GitHub</string>
+    <string name="instagram_button">Profil Instagram</string>
+    <string name="instagram_URL">Pengembang tidak memiliki Instagram</string>
+    <string name="copy_right">Hak Cipta © 2024\n Brindawan Yoga AKA R1N-NY44</string>
+    <string name="share_Todo">%1$s\nTanggal Berakhir: %2$s\nDeskripsi: %3$s\n\nDibagikan dari Aplikasi Pencatatan Tugas</string>
+    <string name="task">Tugas</string>
+    <string name="history">Riwayat</string>
+    <string name="add_task">Tambah Tugas</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Hapus</string>
+    <string name="back">Kembali</string>
+    <string name="share">Bagikan</string>
+    <string name="empty_input">Tidak boleh kosong!</string>
+    <string name="task_title">Masukkan Judul Tugas</string>
+    <string name="task_description">Deskripsi Tugas</string>
+    <string name="add_task_title">Tambah Tugas</string>
+    <string name="edit_task_title">Konfirmasi Perubahan</string>
+    <string name="detail_task_title">Detail Tugas</string>
+    <string name="about_dev_title">Tentang Pengembang</string>
+    <string name="deadline_remaining">Sisa Waktu :</string>
+    <string name="deadline_timeout">Terlewat\n</string>
+    <string name="deadline_day">%d Hari</string>
+    <string name="deadline_hour">%d Jam</string>
+    <string name="deadline_minute">%d Menit</string>
+    <string name="deadline_second">%d Detik</string>
+    <string name="empty_list">Data Kosong</string>
+    <string name="invalid_input">Tidak boleh kosong</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elite, sed do eiusmod tempor incididunt ut labore dan dolore magna aliqua. Dengan sedikit racun, yang merupakan latihan keras yang tidak bisa dilakukan oleh orang lain sebagai konsekuensinya. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Kecuali sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+</resources>

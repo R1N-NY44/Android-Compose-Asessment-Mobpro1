@@ -23,20 +23,17 @@ import androidx.navigation.NavHostController
 import org.d3if3062.asessment1.R
 import org.d3if3062.asessment1.model.ListTaskModel
 import org.d3if3062.asessment1.ui.component.ListItem
-import org.d3if3062.asessment1.ui.component.ListItemHistory
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HistoryTaskScreen(navController: NavHostController, viewModel: ListTaskModel) {
+fun HistoryTaskScreen1(navController: NavHostController, viewModel: ListTaskModel){
     val allTasks by remember { viewModel.getAllTasks() }.observeAsState(initial = emptyList())
 
     val incompleteTasks = allTasks.filter { it.status } // Filter hanya tugas dengan status false
 
     if (incompleteTasks.isEmpty()) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -48,7 +45,7 @@ fun HistoryTaskScreen(navController: NavHostController, viewModel: ListTaskModel
             contentPadding = PaddingValues(bottom = 84.dp)
         ) {
             items(incompleteTasks) { todo ->
-                ListItemHistory(navController, todo) { }
+                ListItem(navController, todo) { }
                 Divider()
             }
         }

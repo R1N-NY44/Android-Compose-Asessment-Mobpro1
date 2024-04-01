@@ -1,5 +1,8 @@
 package org.d3if3062.asessment1.ui.content
 
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,27 +12,41 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.delay
 import org.d3if3062.asessment1.R
 import org.d3if3062.asessment1.model.ListTaskModel
 import org.d3if3062.asessment1.model.TodoList
+import org.d3if3062.asessment1.model.calculateRemainingTime
+import org.d3if3062.asessment1.model.calculateRemainingTimeString
 import org.d3if3062.asessment1.navigation_controller.Screen
+import org.d3if3062.asessment1.ui.component.ListItem
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.util.Locale
+import kotlin.math.abs
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ListTaskScreen(navController: NavHostController, viewModel: ListTaskModel) {
     val allTasks by remember { viewModel.getAllTasks() }.observeAsState(initial = emptyList())
@@ -38,11 +55,13 @@ fun ListTaskScreen(navController: NavHostController, viewModel: ListTaskModel) {
 
     if (incompleteTasks.isEmpty()) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = stringResource(id = R.string.list_kosong))
+            Text(text = stringResource(id = R.string.empty_list))
         }
     } else {
         LazyColumn(
@@ -54,39 +73,5 @@ fun ListTaskScreen(navController: NavHostController, viewModel: ListTaskModel) {
                 Divider()
             }
         }
-    }
-}
-
-
-
-
-@Composable
-fun ListItem(navController: NavHostController, todoList: TodoList, onClick: () -> Unit) {
-    // Cetak todoList.id untuk memastikan nilainya tidak null
-    println("TodoList ID: ${todoList.id}")
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                navController.navigate(Screen.DetailsTask.withTaskId(todoList.id))
-            }
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text(
-            text = todoList.judul + "-" + todoList.id,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = todoList.description,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(
-            text = todoList.deadLine + "-" + todoList.createAt,
-        )
     }
 }

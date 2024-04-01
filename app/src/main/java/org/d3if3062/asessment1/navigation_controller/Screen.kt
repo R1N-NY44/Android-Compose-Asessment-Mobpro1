@@ -3,6 +3,7 @@ package org.d3if3062.asessment1.navigation_controller
 sealed class Screen(val route: String) {
 
     object Base : Screen("home")
+    object Experiment : Screen("ExperimentLevel")
     object Task : Screen("Task")
     object History : Screen("History")
 
