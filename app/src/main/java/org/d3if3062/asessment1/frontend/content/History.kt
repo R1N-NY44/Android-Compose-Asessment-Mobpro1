@@ -1,63 +1,38 @@
-package org.d3if3062.asessment1.ui.content
+package org.d3if3062.asessment1.frontend.content
 
-import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.delay
 import org.d3if3062.asessment1.R
-import org.d3if3062.asessment1.model.ListTaskModel
-import org.d3if3062.asessment1.model.TodoList
-import org.d3if3062.asessment1.model.calculateRemainingTime
-import org.d3if3062.asessment1.model.calculateRemainingTimeString
-import org.d3if3062.asessment1.navigation_controller.Screen
-import org.d3if3062.asessment1.ui.component.ListItem
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import java.util.Locale
-import kotlin.math.abs
+import org.d3if3062.asessment1.backend.database.MainViewModel
+import org.d3if3062.asessment1.frontend.component.ListItem
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ListTaskScreen(navController: NavHostController, viewModel: ListTaskModel) {
+fun HistoryTaskScreen1(navController: NavHostController, viewModel: MainViewModel){
     val allTasks by remember { viewModel.getAllTasks() }.observeAsState(initial = emptyList())
 
-    val incompleteTasks = allTasks.filter { !it.status } // Filter hanya tugas dengan status false
+    val incompleteTasks = allTasks.filter { it.status } // Filter hanya tugas dengan status false
 
     if (incompleteTasks.isEmpty()) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

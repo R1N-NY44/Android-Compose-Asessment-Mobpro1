@@ -1,4 +1,4 @@
-package org.d3if3062.asessment1.ui.screen
+package org.d3if3062.asessment1.frontend.screen
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -9,14 +9,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +39,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,67 +53,53 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3062.asessment1.R
-import org.d3if3062.asessment1.model.ListTaskModel
-import org.d3if3062.asessment1.ui.component.shareTodo
-import org.d3if3062.asessment1.ui.theme.Asessment1Theme
+import org.d3if3062.asessment1.backend.database.MainViewModel
+import org.d3if3062.asessment1.frontend.theme.Asessment1Theme
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.GregorianCalendar
 
-@RequiresApi(Build.VERSION_CODES.N)
+
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditTaskScreen(navController: NavHostController, viewModel: ListTaskModel, taskId: Long) {
-    val task = viewModel.getTaskById(taskId)
-    val context = LocalContext.current
-
-    var taskTitle by rememberSaveable { mutableStateOf(task?.title ?: "") }
-    var description by rememberSaveable { mutableStateOf(task?.description ?: "") }
+fun AddTaskScreen(navController: NavHostController, viewModel: MainViewModel) {
+    var taskTitle by rememberSaveable { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
     var emptyTitle by rememberSaveable { mutableStateOf(false) }
     var emptyDeadLine by rememberSaveable { mutableStateOf(false) }
 
-    val format = SimpleDateFormat("dd/MM/yyyy HH:mm")
-    val currentDate = format.parse(task?.deadLine) // Ubah string menjadi Date
+    val context = LocalContext.current
+    val currentDate = Date()
     var selectedDate by remember { mutableStateOf(currentDate) }
     var dateString by remember { mutableStateOf(SimpleDateFormat("dd/MM/yyyy").format(currentDate)) }
-    var selectedTime by remember { mutableStateOf(currentDate) }
-    var timeString by remember { mutableStateOf(SimpleDateFormat("HH:mm").format(currentDate)) }
-    var deadLine = "$dateString $timeString"
+    var selectedTime by remember { mutableStateOf<Date?>(null) }
+    var timeString by remember { mutableStateOf(SimpleDateFormat("HH:mm").format(Date())) }
+    var deadLine by remember { mutableStateOf(SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date())) }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(id = R.string.edit_task_title)) },
+                title = { Text(stringResource(id = R.string.add_task_title)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back)
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        viewModel.deleteTodoById(taskId)
-                        navController.popBackStack()
-                        navController.popBackStack()
-                    })
+                    IconButton(onClick = { navController.popBackStack() })
                     {
                         Icon(
-                            painter = painterResource(id = R.drawable.delete),
-                            contentDescription = stringResource(id = R.string.delete)
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = stringResource(id = R.string.task_title)
                         )
                     }
-                },
+                }
             )
-
-        }) { paddingValues ->
+        },
+    ) { paddingValues ->
         Box(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
         ) {
-            Column {
+            Column() {
                 // TextField untuk judul tugas
                 OutlinedTextField(
                     modifier = Modifier
@@ -120,20 +111,20 @@ fun EditTaskScreen(navController: NavHostController, viewModel: ListTaskModel, t
                         keyboardType = KeyboardType.Ascii,
                         imeAction = ImeAction.Next
                     ),
-                    onValueChange = { taskTitle = it },
-                    label = { Text(stringResource(id = R.string.task_title)) },
                     isError = emptyTitle,
+                    onValueChange = { taskTitle = it },
                     trailingIcon = { ErrorIcon(emptyTitle) },
                     supportingText = { ErrorHint(emptyTitle) },
+                    label = { Text(stringResource(id = R.string.task_title)) },
                     leadingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.assignment),
-                            contentDescription = stringResource(id = R.string.back)
+                            contentDescription = null
                         )
                     }
                 )
 
-                // Button untuk memilih tanggal dan waktu deadline
+                // Button untuk memilih tanggal dan waktu
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -183,7 +174,6 @@ fun EditTaskScreen(navController: NavHostController, viewModel: ListTaskModel, t
                         )
                     }
 
-
                     OutlinedButton(
                         modifier = Modifier
                             .weight(1f)
@@ -220,78 +210,102 @@ fun EditTaskScreen(navController: NavHostController, viewModel: ListTaskModel, t
                                 painter = painterResource(id = R.drawable.time),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(start = 6.dp) // Atur padding untuk ikon
+                                modifier = Modifier.padding(start = 6.dp)
                             )
                         }
                     }
+                    // Gabungkan output date picker dan time picker dalam variabel deadLine dengan tipe data string
+                    deadLine = "$dateString $timeString"
                 }
 
+
+
                 // TextField untuk deskripsi tugas
-                OutlinedTextField(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
-                    value = description,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Ascii,
-                        imeAction = ImeAction.Done
-                    ),
-                    onValueChange = { description = it },
-                    label = { Text(stringResource(id = R.string.task_description)) },
-                    isError = emptyTitle,
-                    trailingIcon = { ErrorIcon(emptyTitle) },
-                    supportingText = { ErrorHint(emptyTitle) },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.description),
-                            contentDescription = null
-                        )
-                    }
-                )
-            }
+                        .fillMaxHeight()
+                        .padding(bottom = 84.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp),
+                        value = description,
+                        singleLine = false,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Ascii,
+                            imeAction = ImeAction.Done
+                        ),
+                        onValueChange = { description = it },
+                        label = { Text(stringResource(id = R.string.task_description)) },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.description),
+                                contentDescription = null
+                            )
+                        }
 
-            // Button untuk menyimpan perubahan
+                    )
+                }
+
+            }
+            // Button untuk menambahkan tugas
             Button(
                 onClick = {
-                    emptyTitle = (taskTitle.isBlank())
-                    emptyDeadLine = (deadLine.isBlank())
-                    if (emptyTitle || emptyDeadLine) return@Button
+                    emptyTitle = (taskTitle == "" || taskTitle == "0")
+                    if (emptyTitle) return@Button
 
-                    task?.let {
-                        // Memperbarui tugas dengan nilai yang diisi
-                        viewModel.updateTodoById(
-                            it.id,
-                            taskTitle,
-                            deadLine,
-                            description,
-                            it.status,
-                            it.createAt
-
-                        )
-                    }
-                    // Kembali ke layar sebelumnya
+                    viewModel.addTodo(
+                        title = taskTitle,
+                        deadLine = deadLine,
+                        description = description,
+                        status = false
+                    )
                     navController.popBackStack()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.BottomStart)
                     .padding(16.dp),
                 contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp)
             ) {
-                Text(text = stringResource(id = R.string.edit_task_title))
+                Text(text = stringResource(id = R.string.add_task))
             }
+
         }
+
+
     }
 
 }
 
-@RequiresApi(Build.VERSION_CODES.N)
-@Preview
+/*----------------[Exception]----------------*/
 @Composable
-fun EditTaskScreenPreview() {
+fun ErrorHint(isError: Boolean) {
+    if (isError) {
+        Text(
+            text = stringResource(id = R.string.invalid_input),
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Red
+        )
+    }
+}
+
+@Composable
+fun ErrorIcon(isError: Boolean) {
+    if (isError) {
+        Icon(imageVector = Icons.Filled.Warning, contentDescription = null)
+    }
+}
+/*----------------[Exception]----------------*/
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true)
+@Composable
+fun AddTaskPreview() {
     Asessment1Theme {
-        val navController = rememberNavController()
-        val viewModel = ListTaskModel()
-        EditTaskScreen(navController, viewModel, 1)
+        AddTaskScreen(rememberNavController(), viewModel = MainViewModel())
     }
 }

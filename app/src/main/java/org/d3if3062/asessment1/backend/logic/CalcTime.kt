@@ -1,4 +1,4 @@
-package org.d3if3062.asessment1.model
+package org.d3if3062.asessment1.backend.logic
 
 import android.content.Context
 import android.os.Build

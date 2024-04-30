@@ -1,4 +1,4 @@
-package org.d3if3062.asessment1.navigation_controller
+package org.d3if3062.asessment1.backend.navigation_controller
 
 sealed class Screen(val route: String) {
 

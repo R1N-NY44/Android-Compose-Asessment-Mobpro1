@@ -1,4 +1,4 @@
-package org.d3if3062.asessment1.ui.component
+package org.d3if3062.asessment1.frontend.component
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -24,10 +24,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 import org.d3if3062.asessment1.R
-import org.d3if3062.asessment1.model.TodoList
-import org.d3if3062.asessment1.model.calculateRemainingTime
-import org.d3if3062.asessment1.model.calculateRemainingTimeString
-import org.d3if3062.asessment1.navigation_controller.Screen
+import org.d3if3062.asessment1.backend.database.model.TodoList
+import org.d3if3062.asessment1.backend.logic.calculateRemainingTime
+import org.d3if3062.asessment1.backend.logic.calculateRemainingTimeString
+import org.d3if3062.asessment1.backend.navigation_controller.Screen
 import java.text.SimpleDateFormat
 import java.util.Locale
 

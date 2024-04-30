@@ -1,4 +1,4 @@
-package org.d3if3062.asessment1.ui.screen
+package org.d3if3062.asessment1.frontend.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -39,8 +39,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.d3if3062.asessment1.R
-import org.d3if3062.asessment1.navigation_controller.NaviationGraph
-import org.d3if3062.asessment1.navigation_controller.Screen
+import org.d3if3062.asessment1.backend.navigation_controller.NaviationGraph
+import org.d3if3062.asessment1.backend.navigation_controller.Screen
 
 
 @RequiresApi(Build.VERSION_CODES.O)
