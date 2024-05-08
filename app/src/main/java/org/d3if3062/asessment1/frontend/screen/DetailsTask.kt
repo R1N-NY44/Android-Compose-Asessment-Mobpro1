@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,9 +44,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.d3if3062.asessment1.R
 import org.d3if3062.asessment1.backend.database.MainViewModel
 import org.d3if3062.asessment1.backend.logic.calculateRemainingTime
@@ -53,26 +59,53 @@ import org.d3if3062.asessment1.backend.navigation_controller.Screen
 import org.d3if3062.asessment1.frontend.component.shareTodo
 import org.d3if3062.asessment1.frontend.theme.Asessment1Theme
 import java.text.SimpleDateFormat
+import java.util.Date
 import kotlin.math.abs
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetalsTask(navController: NavHostController, viewModel: MainViewModel, taskId: Long) {
-    val task = viewModel.getTaskById(taskId)
+    val format = SimpleDateFormat("dd/MM/yyyy HH:mm")
+
+    var taskTitle by rememberSaveable { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
+    var currentDate by remember { mutableStateOf(Date()) }
+    var taskStatus by remember { mutableStateOf(MutableLiveData<Boolean>()) }
+    val context = LocalContext.current
+
+    LaunchedEffect(true) {
+        while (true) {
+            val task = viewModel.getTodoListById(taskId)!!
+            taskTitle = task.title
+            description = task.description
+            currentDate = format.parse(task.deadLine)!! // Ubah string menjadi Date
+            taskStatus.value = task.status
+            delay(3000)
+        }
+    }
 
     val remainingTime = remember { mutableStateOf("") }
-    val taskTitle by rememberSaveable { mutableStateOf(task?.title ?: "") }
-    val description by rememberSaveable { mutableStateOf(task?.description ?: "") }
-    val format = SimpleDateFormat("dd/MM/yyyy HH:mm")
-    val currentDate = format.parse(task?.deadLine) // Ubah string menjadi Date
-    val dateString by remember { mutableStateOf(SimpleDateFormat("dd/MM/yyyy").format(currentDate)) }
-    val timeString by remember { mutableStateOf(SimpleDateFormat("HH:mm").format(currentDate)) }
-    val context = LocalContext.current
+    val dateString by remember(currentDate) {
+        mutableStateOf(
+            SimpleDateFormat("dd/MMMM/yyyy").format(
+                currentDate
+            )
+        )
+    }
+    val timeString by remember(currentDate) {
+        mutableStateOf(
+            SimpleDateFormat("HH:mm").format(
+                currentDate
+            )
+        )
+    }
 
     // Coroutine untuk pembaruan waktu
     LaunchedEffect(Unit) {
         while (true) {
+            val task = viewModel.getTodoListById(taskId)!!
             val difference = task?.let { calculateRemainingTime(it.deadLine) } ?: 0
             val remainingTimeText = calculateRemainingTimeStringDetails(context, difference)
             remainingTime.value = remainingTimeText
@@ -86,9 +119,16 @@ fun DetalsTask(navController: NavHostController, viewModel: MainViewModel, taskI
                 title = { Text(stringResource(id = R.string.detail_task_title)) },
                 actions = {
                     IconButton(onClick = {
-                        task?.let {
-                            val message = context.getString(R.string.share_Todo, it.title, it.deadLine, it.description)
-                            shareTodo(context, message)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            viewModel.getTodoListById(taskId)?.let {
+                                val message = context.getString(
+                                    R.string.share_Todo,
+                                    it.title,
+                                    it.deadLine,
+                                    it.description
+                                )
+                                shareTodo(context, message)
+                            }
                         }
                     })
                     {
@@ -112,7 +152,12 @@ fun DetalsTask(navController: NavHostController, viewModel: MainViewModel, taskI
             ExtendedFloatingActionButton(
                 modifier = Modifier.padding(bottom = 5.dp),
                 text = { Text(stringResource(id = R.string.edit_task)) },
-                icon = { Icon(Icons.Default.Edit, contentDescription = stringResource(id = R.string.edit)) },
+                icon = {
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = stringResource(id = R.string.edit)
+                    )
+                },
                 onClick = {
                     navController.navigate(Screen.EditTask.withTaskId(taskId))
                 }
@@ -232,19 +277,29 @@ fun DetalsTask(navController: NavHostController, viewModel: MainViewModel, taskI
                             .height(48.dp),
                         shape = RoundedCornerShape(4.dp),
                         onClick = {
-                            task?.let { task ->
-                                viewModel.markTask(task.id)
-                                navController.popBackStack()
-                                navController.navigate(Screen.DetailsTask.withTaskId(taskId))
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val task = viewModel.getTodoListById(taskId)
+                                task?.let { task ->
+                                    //viewModel.markAsDone(task.id)
+                                    //navController.popBackStack()
+                                    //navController.navigate(Screen.DetailsTask.withTaskId(taskId))
+                                }
                             }
                         },
-                        border = BorderStroke(1.dp, if (task?.status == false) Color(0xFF00FF00) else Color(0xFFFF0000))
+
+                        border = BorderStroke(
+                            1.dp,
+                            if (taskStatus.value == false) Color(0xFFFF0000) else Color(0xFF00FF00)
+                        )
+
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 painter = painterResource(id = R.drawable.done_mark),
                                 contentDescription = null,
-                                tint = if (task?.status == false) Color(0xFF00FF00) else Color(0xFFFF0000)
+                                tint = if (taskStatus.value == false) Color(0xFFFF0000) else Color(
+                                    0xFF00FF00
+                                )
                             )
                         }
                     }
@@ -294,27 +349,27 @@ fun calculateRemainingTimeStringDetails(context: Context, difference: Long): Str
         }
         if (hours > 0 || days > 0) {
             append(" ")
-            append("$hours"+"h")
+            append("$hours" + "h")
         }
         if (minutes > 0 || hours > 0 || days > 0) {
             append(" ")
-            append("$minutes"+"m")
+            append("$minutes" + "m")
         }
         if (seconds > 0 || minutes > 0 || hours > 0 || days > 0) {
             append(" ")
-            append("$seconds"+"s")
+            append("$seconds" + "s")
         }
 
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.N)
-@Preview
-@Composable
-fun DetalsTask() {
-    Asessment1Theme {
-        val navController = rememberNavController()
-        val viewModel = MainViewModel()
-        EditTaskScreen(navController, viewModel, 1)
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.N)
+//@Preview
+//@Composable
+//fun DetalsTask() {
+//    Asessment1Theme {
+//        val navController = rememberNavController()
+//        val viewModel: MainViewModel = viewModel()
+//        EditTaskScreen(navController, viewModel, 1)
+//    }
+//}

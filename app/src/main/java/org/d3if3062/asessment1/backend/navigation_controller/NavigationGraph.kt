@@ -3,12 +3,15 @@ package org.d3if3062.asessment1.backend.navigation_controller
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.d3if3062.asessment1.backend.database.MainViewModel
+import org.d3if3062.asessment1.backend.database.TodoList_DB
+import org.d3if3062.asessment1.backend.database.utils.ViewModelFactory
 import org.d3if3062.asessment1.frontend.content.HistoryTaskScreen
 import org.d3if3062.asessment1.frontend.screen.AddTaskScreen
 import org.d3if3062.asessment1.frontend.content.ListTaskScreen
@@ -19,7 +22,14 @@ import org.d3if3062.asessment1.frontend.screen.EditTaskScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NaviationGraph(navController: NavHostController = rememberNavController(), viewModel: MainViewModel = viewModel())  {
+fun NaviationGraph(navController: NavHostController = rememberNavController()/*, viewModel: MainViewModel = viewModel()*/)  {
+
+    // Inisialisasi database dan view model
+    val context = LocalContext.current
+    val db = TodoList_DB.getInstance(context)
+    val factory = ViewModelFactory(db.dao)
+    val viewModel: MainViewModel = viewModel(factory = factory)
+
     NavHost(
         navController = navController,
         startDestination = Screen.Task.route
@@ -33,13 +43,6 @@ fun NaviationGraph(navController: NavHostController = rememberNavController(), v
             HistoryTaskScreen(navController, viewModel)
             //AnimalApp()
         }
-
-//        composable(route = Screen.Experiment.route) {
-//            Experiment2()
-//            //AnimalApp()
-//        }
-
-
 
         /*----------------[Sub Route]----------------*/
 

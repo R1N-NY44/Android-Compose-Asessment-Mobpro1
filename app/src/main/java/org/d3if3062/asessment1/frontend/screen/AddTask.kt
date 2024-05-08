@@ -50,6 +50,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3062.asessment1.R
@@ -256,12 +257,12 @@ fun AddTaskScreen(navController: NavHostController, viewModel: MainViewModel) {
                 onClick = {
                     emptyTitle = (taskTitle == "" || taskTitle == "0")
                     if (emptyTitle) return@Button
-
-                    viewModel.addTodo(
+                    viewModel.insert(
                         title = taskTitle,
                         deadLine = deadLine,
                         description = description,
-                        status = false
+                        status = false,
+                        createAt = SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date())
                     )
                     navController.popBackStack()
                 },
@@ -306,6 +307,7 @@ fun ErrorIcon(isError: Boolean) {
 @Composable
 fun AddTaskPreview() {
     Asessment1Theme {
-        AddTaskScreen(rememberNavController(), viewModel = MainViewModel())
+        val viewModel: MainViewModel = viewModel()
+        AddTaskScreen(rememberNavController(), viewModel)
     }
 }
