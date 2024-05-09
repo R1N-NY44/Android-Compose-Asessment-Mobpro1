@@ -80,36 +80,23 @@ fun DetalsTask(navController: NavHostController, viewModel: MainViewModel, taskI
             val task = viewModel.getTodoListById(taskId)!!
             taskTitle = task.title
             description = task.description
-            currentDate = format.parse(task.deadLine)!! // Ubah string menjadi Date
+            currentDate = format.parse(task.deadLine)!!
             taskStatus.value = task.status
-            delay(3000)
+            delay(2500)
         }
     }
 
     val remainingTime = remember { mutableStateOf("") }
-    val dateString by remember(currentDate) {
-        mutableStateOf(
-            SimpleDateFormat("dd/MMMM/yyyy").format(
-                currentDate
-            )
-        )
-    }
-    val timeString by remember(currentDate) {
-        mutableStateOf(
-            SimpleDateFormat("HH:mm").format(
-                currentDate
-            )
-        )
-    }
+    val dateString by remember(currentDate) { mutableStateOf(SimpleDateFormat("dd/MMMM/yyyy").format(currentDate)) }
+    val timeString by remember(currentDate) { mutableStateOf(SimpleDateFormat("HH:mm").format(currentDate)) }
 
     // Coroutine untuk pembaruan waktu
     LaunchedEffect(Unit) {
         while (true) {
-            val task = viewModel.getTodoListById(taskId)!!
-            val difference = task?.let { calculateRemainingTime(it.deadLine) } ?: 0
+            val difference = viewModel.getTodoListById(taskId)?.let { calculateRemainingTime(it.deadLine) } ?: 0
             val remainingTimeText = calculateRemainingTimeStringDetails(context, difference)
             remainingTime.value = remainingTimeText
-            delay(1000) // Menunggu 1 detik sebelum menghitung ulang
+            delay(1000)
         }
     }
 
@@ -170,6 +157,7 @@ fun DetalsTask(navController: NavHostController, viewModel: MainViewModel, taskI
                 .fillMaxSize(),
         ) {
             Column {
+
                 // TextField untuk judul tugas
                 OutlinedTextField(
                     modifier = Modifier
@@ -278,18 +266,16 @@ fun DetalsTask(navController: NavHostController, viewModel: MainViewModel, taskI
                         shape = RoundedCornerShape(4.dp),
                         onClick = {
                             CoroutineScope(Dispatchers.IO).launch {
-                                val task = viewModel.getTodoListById(taskId)
-                                task?.let { task ->
-                                    //viewModel.markAsDone(task.id)
-                                    //navController.popBackStack()
-                                    //navController.navigate(Screen.DetailsTask.withTaskId(taskId))
+                                viewModel.getTodoListById(taskId)?.let { task ->
+                                    viewModel.markAsDone(task.id)
                                 }
                             }
+                            navController.popBackStack()
+                            navController.navigate(Screen.DetailsTask.withTaskId(taskId))
                         },
-
                         border = BorderStroke(
                             1.dp,
-                            if (taskStatus.value == false) Color(0xFFFF0000) else Color(0xFF00FF00)
+                            if (taskStatus.value == true) Color(0xFF00FF00) else Color(0xFFFF0000)
                         )
 
                     ) {
@@ -297,8 +283,8 @@ fun DetalsTask(navController: NavHostController, viewModel: MainViewModel, taskI
                             Icon(
                                 painter = painterResource(id = R.drawable.done_mark),
                                 contentDescription = null,
-                                tint = if (taskStatus.value == false) Color(0xFFFF0000) else Color(
-                                    0xFF00FF00
+                                tint = if (taskStatus.value == true) Color(0xFF00FF00) else Color(
+                                    0xFFFF0000
                                 )
                             )
                         }

@@ -64,9 +64,8 @@ class MainViewModel(val dao: Dao_Interface) : ViewModel() {
         viewModelScope.launch {
             val todoList = dao.getTodoListById(id)
             todoList?.let {
-                dao.update(it.copy(status = true))
+                dao.update(it.copy(status = if (it.status) false else true))
             }
         }
     }
-
 }
