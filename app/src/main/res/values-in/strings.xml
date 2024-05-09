@@ -34,4 +34,10 @@
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elite, sed do eiusmod tempor incididunt ut labore dan dolore magna aliqua. Dengan sedikit racun, yang merupakan latihan keras yang tidak bisa dilakukan oleh orang lain sebagai konsekuensinya. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Kecuali sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
     <string name="edit_task">Edit Tugas</string>
     <string name="upcoming_feature">Fitur Belum Tersedia</string>
+    <string name="empty_task_title">Judul Tugas tidak boleh kosong</string>
+    <string name="alert_delete">Apakah anda yakin ingin menghapus ini ?</string>
+    <string name="alert_mark_done">Apakah anda sudah menyelesaikan tugas ini ?</string>
+    <string name="alert_mark_undone">Apakah anda ingin menandai tugas ini belum selesai ?</string>
+    <string name="alert_yes">Ya</string>
+    <string name="alert_no">Tidak</string>
 </resources>
