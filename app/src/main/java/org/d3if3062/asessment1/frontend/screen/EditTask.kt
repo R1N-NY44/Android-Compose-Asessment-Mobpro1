@@ -3,6 +3,7 @@ package org.d3if3062.asessment1.frontend.screen
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,6 +55,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.d3if3062.asessment1.R
 import org.d3if3062.asessment1.backend.database.MainViewModel
+import org.d3if3062.asessment1.frontend.component.DisplayAlertDialog
 import org.d3if3062.asessment1.frontend.theme.Asessment1Theme
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -89,6 +91,8 @@ fun EditTaskScreen(navController: NavHostController, viewModel: MainViewModel, t
     var timeString by remember(currentDate) { mutableStateOf(SimpleDateFormat("HH:mm").format(currentDate)) } // Gunakan currentDate sebagai parameter
     var deadLine = "$dateString $timeString"
 
+    var deleteDoneAlert by remember { mutableStateOf(false) }
+
 
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
@@ -102,10 +106,19 @@ fun EditTaskScreen(navController: NavHostController, viewModel: MainViewModel, t
                 }
             },
             actions = {
-                IconButton(onClick = {
+                DisplayAlertDialog(
+                    openDialog = deleteDoneAlert,
+                    alertMessage = R.string.alert_mark_undone,
+                    alertConfirmMessage = R.string.alert_yes,
+                    alertDismissMessage = R.string.alert_no,
+                    onDismissRequest = { deleteDoneAlert = false },
+                ) {
                     viewModel.deleteTodoListById(taskId)
                     navController.popBackStack()
                     navController.popBackStack()
+                }
+                IconButton(onClick = {
+                    deleteDoneAlert = true
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.delete),
@@ -256,7 +269,14 @@ fun EditTaskScreen(navController: NavHostController, viewModel: MainViewModel, t
                 onClick = {
                     emptyTitle = (taskTitle.isBlank())
                     emptyDeadLine = (deadLine.isBlank())
-                    if (emptyTitle || emptyDeadLine) return@Button
+                    if (emptyTitle || emptyDeadLine) {
+                        Toast.makeText(
+                            navController.context,
+                            R.string.empty_task_title,
+                            Toast.LENGTH_LONG
+                        ).show()
+                        return@Button
+                    }
 
                     CoroutineScope(Dispatchers.IO).launch {
                         viewModel.getTodoListById(taskId)?.let {

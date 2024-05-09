@@ -3,6 +3,7 @@ package org.d3if3062.asessment1.frontend.screen
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -69,7 +70,6 @@ fun AddTaskScreen(navController: NavHostController, viewModel: MainViewModel) {
     var taskTitle by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
     var emptyTitle by rememberSaveable { mutableStateOf(false) }
-    var emptyDeadLine by rememberSaveable { mutableStateOf(false) }
 
     val context = LocalContext.current
     val currentDate = Date()
@@ -256,7 +256,14 @@ fun AddTaskScreen(navController: NavHostController, viewModel: MainViewModel) {
             Button(
                 onClick = {
                     emptyTitle = (taskTitle == "" || taskTitle == "0")
-                    if (emptyTitle) return@Button
+                    if (emptyTitle) {
+                        Toast.makeText(
+                            navController.context,
+                            R.string.empty_task_title,
+                            Toast.LENGTH_LONG
+                        ).show()
+                        return@Button
+                    }
                     viewModel.insert(
                         title = taskTitle,
                         deadLine = deadLine,

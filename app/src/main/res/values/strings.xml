@@ -1,54 +1,76 @@
 <resources>
     <string name="app_name">Todo Apps</string>
 
-/////////////////////////////////[Divider for Application Button/Icon/Hint]/////////////////////////////////
+    /////////////////////////////////[Divider for Application
+    Button/Icon/Hint]/////////////////////////////////
 
     //Share Data
     //for share data (share, share_template)
-    /<string name="about_dev">About Dev</string>
-    /<string name="github_URL">https://github.com/R1N-NY44</string>
-    /<string name="git_username">R1N-NY44</string>
-    /<string name="git_button">GitHub Profile</string>
-    /<string name="instagram_button">Instagram Profile</string>
-    /<string name="instagram_URL">Developer Doesn\'t have Instagram</string>
+    /
+    <string name="about_dev">About Dev</string>
+    /
+    <string name="github_URL">https://github.com/R1N-NY44</string>
+    /
+    <string name="git_username">R1N-NY44</string>
+    /
+    <string name="git_button">GitHub Profile</string>
+    /
+    <string name="instagram_button">Instagram Profile</string>
+    /
+    <string name="instagram_URL">Developer Doesn\'t have Instagram</string>
     <string name="upcoming_feature">Upcoming Feature</string>
-    /<string name="copy_right">v1.4.2 Copyright ©2024\n Brindawan Yoga AKA R1N-NY44</string>
-    /<string name="share_Todo">%1$s\nDue Date: %2$s\nDescription: %3$s\n\nShared from Todo Apps</string>
+    /
+    <string name="copy_right">v1.5.3 Copyright ©2024\n Brindawan Yoga AKA R1N-NY44</string>
+    /
+    <string name="share_Todo">%1$s\nDue Date: %2$s\nDescription: %3$s\n\nShared from Todo Apps</string>
 
 
     //Navigation Button
     //for navigation button (task, history, light_mode, dark_mode, add_task) ScreenBase Layout
-    /<string name="task">Task</string>
-    /<string name="history">History</string>
-    /<string name="add_task">Add Task</string>
-<!--    <string name="light_mode">Switch to Light Mode</string>-->
-<!--    <string name="dark_mode">Switch to Dark Mode</string>-->
+    /
+    <string name="task">Task</string>
+    /
+    <string name="history">History</string>
+    /
+    <string name="add_task">Add Task</string>
+    <!--    <string name="light_mode">Switch to Light Mode</string>-->
+    <!--    <string name="dark_mode">Switch to Dark Mode</string>-->
 
     //Navigation Control
     //for navigation control (edit, delete, save, done, back)
-    /<string name="edit">Edit</string>
-    /<string name="delete">Delete</string>
-<!--    <string name="save">Save</string>-->
-<!--    <string name="done">done</string>-->
-    /<string name="back">Back</string>
-    /<string name="share">Share</string>
+    /
+    <string name="edit">Edit</string>
+    /
+    <string name="delete">Delete</string>
+    <!--    <string name="save">Save</string>-->
+    <!--    <string name="done">done</string>-->
+    /
+    <string name="back">Back</string>
+    /
+    <string name="share">Share</string>
 
     //Naviagation Hint
-    /<string name="empty_input">Cannot be empty!</string>
-    /<string name="task_title">Input Task Title</string>
-    /<string name="task_description">Task Description</string>
+    /
+    <string name="empty_input">Cannot be empty!</string>
+    /
+    <string name="task_title">Input Task Title</string>
+    /
+    <string name="task_description">Task Description</string>
 
 
     //Navigation Title
     //for navigation title (add_task_title, edit_task_title, history_title, about_dev_title)
-    /<string name="add_task_title">Add Task</string>
+    /
+    <string name="add_task_title">Add Task</string>
     <string name="edit_task">Edit Task</string>
-    /<string name="edit_task_title">Confirm Edit Task</string>
-    /<string name="detail_task_title">Detail Task</string>
-<!--    <string name="history_title">History</string>-->
+    /
+    <string name="edit_task_title">Confirm Edit Task</string>
+    /
+    <string name="detail_task_title">Detail Task</string>
+    <!--    <string name="history_title">History</string>-->
     <string name="about_dev_title">About Dev</string>
 
-/////////////////////////////////[Divider for Application Text]/////////////////////////////////
+    /////////////////////////////////[Divider for Application Text]/////////////////////////////////
 
     //List Task
     <string name="deadline_remaining">Remaining time :</string>
@@ -61,10 +83,18 @@
     //Exception Text
     //for exception text (list_kosong, tambah_error)
     <string name="empty_list">Data is Empty</string>
+    <string name="empty_task_title">Task Title can not be empty</string>
+
     <string name="invalid_input">Can not be empty</string>
 
     //Lorem Ipsum
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+
+    <string name="alert_delete">Are you sure want to delete this task?</string>
+    <string name="alert_mark_done">Are you sure want to mark this task as done?</string>
+    <string name="alert_mark_undone">Are you sure want to mark this task as undone?</string>
+    <string name="alert_yes">Yes</string>
+    <string name="alert_no">No</string>
 
 
 </resources>

@@ -56,6 +56,7 @@ import org.d3if3062.asessment1.R
 import org.d3if3062.asessment1.backend.database.MainViewModel
 import org.d3if3062.asessment1.backend.logic.calculateRemainingTime
 import org.d3if3062.asessment1.backend.navigation_controller.Screen
+import org.d3if3062.asessment1.frontend.component.DisplayAlertDialog
 import org.d3if3062.asessment1.frontend.component.shareTodo
 import org.d3if3062.asessment1.frontend.theme.Asessment1Theme
 import java.text.SimpleDateFormat
@@ -73,6 +74,7 @@ fun DetalsTask(navController: NavHostController, viewModel: MainViewModel, taskI
     var description by rememberSaveable { mutableStateOf("") }
     var currentDate by remember { mutableStateOf(Date()) }
     var taskStatus by remember { mutableStateOf(MutableLiveData<Boolean>()) }
+    var markDoneAlert by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     LaunchedEffect(true) {
@@ -87,13 +89,26 @@ fun DetalsTask(navController: NavHostController, viewModel: MainViewModel, taskI
     }
 
     val remainingTime = remember { mutableStateOf("") }
-    val dateString by remember(currentDate) { mutableStateOf(SimpleDateFormat("dd/MMMM/yyyy").format(currentDate)) }
-    val timeString by remember(currentDate) { mutableStateOf(SimpleDateFormat("HH:mm").format(currentDate)) }
+    val dateString by remember(currentDate) {
+        mutableStateOf(
+            SimpleDateFormat("dd/MMMM/yyyy").format(
+                currentDate
+            )
+        )
+    }
+    val timeString by remember(currentDate) {
+        mutableStateOf(
+            SimpleDateFormat("HH:mm").format(
+                currentDate
+            )
+        )
+    }
 
     // Coroutine untuk pembaruan waktu
     LaunchedEffect(Unit) {
         while (true) {
-            val difference = viewModel.getTodoListById(taskId)?.let { calculateRemainingTime(it.deadLine) } ?: 0
+            val difference =
+                viewModel.getTodoListById(taskId)?.let { calculateRemainingTime(it.deadLine) } ?: 0
             val remainingTimeText = calculateRemainingTimeStringDetails(context, difference)
             remainingTime.value = remainingTimeText
             delay(1000)
@@ -124,230 +139,266 @@ fun DetalsTask(navController: NavHostController, viewModel: MainViewModel, taskI
                             contentDescription = stringResource(id = R.string.share)
                         )
                     }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back)
-                        )
+                    if (markDoneAlert) {
+                        if (taskStatus.value == true) {
+                            DisplayAlertDialog(
+                                openDialog = markDoneAlert,
+                                alertMessage = R.string.alert_mark_undone,
+                                alertConfirmMessage = R.string.alert_yes,
+                                alertDismissMessage = R.string.alert_no,
+                                onDismissRequest = { markDoneAlert = false },
+                            ) {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    viewModel.getTodoListById(taskId)?.let { task ->
+                                        viewModel.markAsDone(task.id)
+                                    }
+                                }
+                                navController.popBackStack()
+                                //navController.navigate(Screen.DetailsTask.withTaskId(taskId))
+                            }
+                        } else {
+                            DisplayAlertDialog(
+                                openDialog = markDoneAlert,
+                                alertMessage = R.string.alert_mark_done,
+                                alertConfirmMessage = R.string.alert_yes,
+                                alertDismissMessage = R.string.alert_no,
+                                onDismissRequest = { markDoneAlert = false },
+                            ) {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    viewModel.getTodoListById(taskId)?.let { task ->
+                                        viewModel.markAsDone(task.id)
+                                    }
+                                }
+                                navController.popBackStack()
+                                //navController.navigate(Screen.DetailsTask.withTaskId(taskId))
+                            }
+                        }
                     }
-                }
-            )
-        },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                modifier = Modifier.padding(bottom = 5.dp),
-                text = { Text(stringResource(id = R.string.edit_task)) },
-                icon = {
-                    Icon(
-                        Icons.Default.Edit,
-                        contentDescription = stringResource(id = R.string.edit)
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = stringResource(id = R.string.back)
+                            )
+                        }
+                    }
                     )
                 },
-                onClick = {
-                    navController.navigate(Screen.EditTask.withTaskId(taskId))
-                }
-            )
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-        ) {
-            Column {
-
-                // TextField untuk judul tugas
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
-                    value = taskTitle, readOnly = true, onValueChange = { },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.assignment),
-                            contentDescription = null
-                        )
-                    }
-                )
-
-                // Button untuk memilih tanggal dan waktu deadline
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp, start = 16.dp, end = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedButton(modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                        shape = RoundedCornerShape(4.dp),
-                        onClick = {}
-                    ) {
-                        Text(
-                            text = dateString,
-                            style = TextStyle(
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Normal
-                            )
-                        )
-                        Icon(
-                            painter = painterResource(id = R.drawable.date),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(start = 6.dp)
-                        )
-                    }
-                    //////////////////////////////////////////////
-                    OutlinedButton(modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                        shape = RoundedCornerShape(4.dp),
-                        onClick = {}
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = timeString,
-                                style = TextStyle(
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Normal
-                                )
-                            )
+                floatingActionButton = {
+                    ExtendedFloatingActionButton(
+                        modifier = Modifier.padding(bottom = 5.dp),
+                        text = { Text(stringResource(id = R.string.edit_task)) },
+                        icon = {
                             Icon(
-                                painter = painterResource(id = R.drawable.time),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(start = 6.dp)
+                                Icons.Default.Edit,
+                                contentDescription = stringResource(id = R.string.edit)
                             )
-                        }
-                    }
-                }
-
-                // Button untuk memilih tanggal dan waktu deadline
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp, bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedButton(modifier = Modifier
-                        .weight(2f)
-                        .height(48.dp),
-                        shape = RoundedCornerShape(4.dp),
-                        onClick = {}
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = remainingTime.value,
-                                style = TextStyle(
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Normal
-                                )
-                            )
-                            Icon(
-                                painter = painterResource(id = R.drawable.deadline),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(start = 6.dp)
-                            )
-                        }
-                    }
-
-                    OutlinedButton(
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .height(48.dp),
-                        shape = RoundedCornerShape(4.dp),
+                        },
                         onClick = {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                viewModel.getTodoListById(taskId)?.let { task ->
-                                    viewModel.markAsDone(task.id)
+                            navController.navigate(Screen.EditTask.withTaskId(taskId))
+                        }
+                    )
+                }
+            ) { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize(),
+                ) {
+                    Column {
+
+                        // TextField untuk judul tugas
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp),
+                            value = taskTitle, readOnly = true, onValueChange = { },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.assignment),
+                                    contentDescription = null
+                                )
+                            }
+                        )
+
+                        // Button untuk memilih tanggal dan waktu deadline
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 12.dp, start = 16.dp, end = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            OutlinedButton(modifier = Modifier
+                                .weight(1f)
+                                .height(48.dp),
+                                shape = RoundedCornerShape(4.dp),
+                                onClick = {}
+                            ) {
+                                Text(
+                                    text = dateString,
+                                    style = TextStyle(
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Normal
+                                    )
+                                )
+                                Icon(
+                                    painter = painterResource(id = R.drawable.date),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.padding(start = 6.dp)
+                                )
+                            }
+                            //////////////////////////////////////////////
+                            OutlinedButton(modifier = Modifier
+                                .weight(1f)
+                                .height(48.dp),
+                                shape = RoundedCornerShape(4.dp),
+                                onClick = {}
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = timeString,
+                                        style = TextStyle(
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Normal
+                                        )
+                                    )
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.time),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.padding(start = 6.dp)
+                                    )
                                 }
                             }
-                            navController.popBackStack()
-                            navController.navigate(Screen.DetailsTask.withTaskId(taskId))
-                        },
-                        border = BorderStroke(
-                            1.dp,
-                            if (taskStatus.value == true) Color(0xFF00FF00) else Color(0xFFFF0000)
-                        )
-
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.done_mark),
-                                contentDescription = null,
-                                tint = if (taskStatus.value == true) Color(0xFF00FF00) else Color(
-                                    0xFFFF0000
-                                )
-                            )
                         }
+
+                        // Button untuk memilih tanggal dan waktu deadline
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 12.dp, bottom = 12.dp, start = 16.dp, end = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            OutlinedButton(modifier = Modifier
+                                .weight(2f)
+                                .height(48.dp),
+                                shape = RoundedCornerShape(4.dp),
+                                onClick = {}
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = remainingTime.value,
+                                        style = TextStyle(
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Normal
+                                        )
+                                    )
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.deadline),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.padding(start = 6.dp)
+                                    )
+                                }
+                            }
+
+                            OutlinedButton(
+                                modifier = Modifier
+                                    .padding(start = 16.dp)
+                                    .height(48.dp),
+                                shape = RoundedCornerShape(4.dp),
+                                onClick = {
+                                    markDoneAlert = true
+//                            CoroutineScope(Dispatchers.IO).launch {
+//                                viewModel.getTodoListById(taskId)?.let { task ->
+//                                    viewModel.markAsDone(task.id)
+//                                }
+//                            }
+                                },
+                                border = BorderStroke(
+                                    1.dp,
+                                    if (taskStatus.value == true) Color(0xFF00FF00) else Color(
+                                        0xFFFF0000
+                                    )
+                                )
+
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.done_mark),
+                                        contentDescription = null,
+                                        tint = if (taskStatus.value == true) Color(0xFF00FF00) else Color(
+                                            0xFFFF0000
+                                        )
+                                    )
+                                }
+                            }
+
+
+                        }
+
+                        // TextField untuk deskripsi tugas
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp),
+                            value = description,
+                            readOnly = true,
+                            onValueChange = { },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.assignment),
+                                    contentDescription = null
+                                )
+                            }
+                        )
                     }
+                }
+            }
+
+        }
 
 
+        fun calculateRemainingTimeStringDetails(context: Context, difference: Long): String {
+            val absDifference = abs(difference)
+            val secondsInMinute = 60
+            val secondsInHour = 3600
+            val secondsInDay = 86400
+
+            val days = absDifference / secondsInDay
+            val hours = (absDifference % secondsInDay) / secondsInHour
+            val minutes = ((absDifference % secondsInDay) % secondsInHour) / secondsInMinute
+            val seconds = ((absDifference % secondsInDay) % secondsInHour) % secondsInMinute
+
+            return buildString {
+                if (difference < 0) {
+                    append("-")
+                }
+                if (days > 0) {
+                    append(context.getString(R.string.deadline_day, days))
+                }
+                if (hours > 0 || days > 0) {
+                    append(" ")
+                    append("$hours" + "h")
+                }
+                if (minutes > 0 || hours > 0 || days > 0) {
+                    append(" ")
+                    append("$minutes" + "m")
+                }
+                if (seconds > 0 || minutes > 0 || hours > 0 || days > 0) {
+                    append(" ")
+                    append("$seconds" + "s")
                 }
 
-                // TextField untuk deskripsi tugas
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
-                    value = description,
-                    readOnly = true,
-                    onValueChange = { },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.assignment),
-                            contentDescription = null
-                        )
-                    }
-                )
             }
         }
-    }
-
-}
-
-
-fun calculateRemainingTimeStringDetails(context: Context, difference: Long): String {
-    val absDifference = abs(difference)
-    val secondsInMinute = 60
-    val secondsInHour = 3600
-    val secondsInDay = 86400
-
-    val days = absDifference / secondsInDay
-    val hours = (absDifference % secondsInDay) / secondsInHour
-    val minutes = ((absDifference % secondsInDay) % secondsInHour) / secondsInMinute
-    val seconds = ((absDifference % secondsInDay) % secondsInHour) % secondsInMinute
-
-    return buildString {
-        if (difference < 0) {
-            append("-")
-        }
-        if (days > 0) {
-            append(context.getString(R.string.deadline_day, days))
-        }
-        if (hours > 0 || days > 0) {
-            append(" ")
-            append("$hours" + "h")
-        }
-        if (minutes > 0 || hours > 0 || days > 0) {
-            append(" ")
-            append("$minutes" + "m")
-        }
-        if (seconds > 0 || minutes > 0 || hours > 0 || days > 0) {
-            append(" ")
-            append("$seconds" + "s")
-        }
-
-    }
-}
 
 //@RequiresApi(Build.VERSION_CODES.N)
 //@Preview
