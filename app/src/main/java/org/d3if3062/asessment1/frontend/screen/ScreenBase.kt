@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -55,11 +56,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.d3if3062.asessment1.R
 import org.d3if3062.asessment1.backend.navigation_controller.NaviationGraph
 import org.d3if3062.asessment1.backend.navigation_controller.Screen
 import org.d3if3062.asessment1.frontend.component.shareLink
+import org.d3if3062.asessment1.frontend.theme.Asessment1Theme
+import org.d3if3062.mobpro1.util.SettingsDataStore
 
 // Di sederhanakan dengan menggunakan enum class, cara sebelumnya ada di file ScreenBaseOld.kt
 enum class BottomNavigationScreen(
@@ -86,184 +91,197 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
 
     val context = LocalContext.current
 
-    //Double Routing cara sesat yg saya dapatkan dari eksperimen saya
-    // :'v masih belum menemukan cara yg pas di internet
-    //jika route aktif saat ini tidak terdapat pada bottomNavigationItems maka akan menampilkan default routing
-    if (currentRoute !in bottomNavigationItems.map { it.route }) {
-        NaviationGraph(navController)
-    } else {
+    val dataStore = SettingsDataStore(LocalContext.current)
+    val appTheme by dataStore.layoutFlow.collectAsState(true)
 
-        //Default Routing
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-            ModalNavigationDrawer(
-                drawerState = drawerState,
-                scrimColor = Color.Black.copy(alpha = 0.5f),
-                drawerContent = {
-                    ModalDrawerSheet(
-                        drawerShape = RectangleShape,
-                        modifier = Modifier.widthIn(max = LocalConfiguration.current.screenWidthDp.dp * 0.60f)
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+    suspend fun changeTheme(){
+        dataStore.saveLayout(!appTheme)
+    }
+
+    Asessment1Theme(darkTheme = appTheme) {
+        //Double Routing cara sesat yg saya dapatkan dari eksperimen saya
+        // :'v masih belum menemukan cara yg pas di internet
+        //jika route aktif saat ini tidak terdapat pada bottomNavigationItems maka akan menampilkan default routing
+        if (currentRoute !in bottomNavigationItems.map { it.route }) {
+            NaviationGraph(navController)
+        } else {
+            //Default Routing
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                ModalNavigationDrawer(
+                    drawerState = drawerState,
+                    scrimColor = Color.Black.copy(alpha = 0.5f),
+                    drawerContent = {
+                        ModalDrawerSheet(
+                            drawerShape = RectangleShape,
+                            modifier = Modifier.widthIn(max = LocalConfiguration.current.screenWidthDp.dp * 0.60f)
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
                             ) {
-                                val gradientColors = listOf(
-                                    Color(0xFF8A2BE2), // Purple color menggunakan kode hex
-                                    //Color(0xFFADD8E6), // Light Blue color menggunakan kode hex
-                                    Color(0xFF00FFFF) // Cyan color menggunakan kode hex
-                                )
-                                Image(
-                                    painter = painterResource(id = R.drawable.github),
-                                    contentDescription = stringResource(id = R.string.about_dev),
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier
-                                        .widthIn(max = LocalConfiguration.current.screenWidthDp.dp * 0.45f)
-                                        .aspectRatio(1f) // menjaga gambar agar tetap proporsional
-                                        .clip(CircleShape)
-                                        .border(
-                                            2.dp,
-                                            Brush.linearGradient(colors = gradientColors),
-                                            CircleShape
-                                        )
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text(
-                                    text = stringResource(id = R.string.git_username),
-                                    style = TextStyle(
-                                        brush = Brush.linearGradient(colors = gradientColors),
-                                        fontSize = 38.sp
-                                    )
-                                )
-                                Spacer(modifier = Modifier.height(86.dp))
-                                Button(
-                                    onClick = {
-                                        shareLink(
-                                            context,
-                                            url = context.getString(R.string.github_URL)
-                                        )
-                                    },
-                                    modifier = Modifier
-                                        .defaultMinSize(minWidth = 165.dp, minHeight = 38.dp)
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text(
-                                        text = stringResource(id = R.string.git_button),
-                                        fontSize = 16.sp
+                                    val gradientColors = listOf(
+                                        Color(0xFF8A2BE2), // Purple color menggunakan kode hex
+                                        //Color(0xFFADD8E6), // Light Blue color menggunakan kode hex
+                                        Color(0xFF00FFFF) // Cyan color menggunakan kode hex
                                     )
-                                }
-                                Spacer(modifier = Modifier.height(18.dp))
-                                Button(
-                                    onClick = {
-                                        // Handle klik tombol untuk menautkan ke profil GitHub
-                                        val text = context.getString(R.string.instagram_URL)
-                                        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-                                    },
-                                    modifier = Modifier
-                                        .defaultMinSize(minWidth = 165.dp, minHeight = 38.dp)
-                                ) {
-                                    Text(
-                                        text = stringResource(id = R.string.instagram_button),
-                                        fontSize = 16.sp
+                                    Image(
+                                        painter = painterResource(id = R.drawable.github),
+                                        contentDescription = stringResource(id = R.string.about_dev),
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .widthIn(max = LocalConfiguration.current.screenWidthDp.dp * 0.45f)
+                                            .aspectRatio(1f) // menjaga gambar agar tetap proporsional
+                                            .clip(CircleShape)
+                                            .border(
+                                                2.dp,
+                                                Brush.linearGradient(colors = gradientColors),
+                                                CircleShape
+                                            )
                                     )
-                                }
-
-                            }
-                            Text(
-                                text = stringResource(id = R.string.copy_right),
-                                fontSize = 12.sp,
-                                color = Color.Gray,
-                                modifier = Modifier
-                                    .align(Alignment.BottomStart)
-                                    .padding(16.dp)
-                            )
-                        }
-                        Divider()
-                    }
-                },
-            ) {
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                    Scaffold(
-                        topBar = {
-                            CenterAlignedTopAppBar(
-                                title = { Text(stringResource(id = R.string.app_name)) },
-                                actions = {
-                                    IconButton(onClick = {
-                                        scope.launch {
-                                            drawerState.apply { if (isClosed) open() else close() }
-                                        }
-                                    })
-                                    {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.outline_auto_awesome_mosaic_24),
-                                            contentDescription = stringResource(id = R.string.about_dev)
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(
+                                        text = stringResource(id = R.string.git_username),
+                                        style = TextStyle(
+                                            brush = Brush.linearGradient(colors = gradientColors),
+                                            fontSize = 38.sp
                                         )
-                                    }
-                                },
-                                navigationIcon = {
-                                    //Niatnya dibuatkan agar bisa mendeteksi mode hp (dark/light),  kemudian jika di tekan akan merubah mode aplikasi ke dark/light, Upcoming feature
-                                    IconButton(onClick = {
-                                        val text = context.getString(R.string.upcoming_feature)
-                                        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-                                    })
-                                    {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.dark_mode),
-                                            contentDescription = ""
-                                        )
-                                    }
-                                }
-
-                            )
-                        },
-                        bottomBar = {
-                            NavigationBar {
-                                bottomNavigationItems.forEach { screen ->
-                                    NavigationBarItem(
-                                        icon = {
-                                            val iconPainter = painterResource(id = screen.iconResId)
-                                            Icon(painter = iconPainter, contentDescription = null)
-                                        },
-                                        label = { Text(stringResource(id = screen.textResId)) },
-                                        selected = currentRoute == screen.route,
+                                    )
+                                    Spacer(modifier = Modifier.height(86.dp))
+                                    Button(
                                         onClick = {
-                                            navController.navigate(screen.route) {
-                                                popUpTo(navController.graph.startDestinationId) {
-                                                    this.saveState = true
-                                                }
-                                                this.launchSingleTop = true
-                                                this.restoreState = true
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                        },
-                        floatingActionButton = {
-                            ExtendedFloatingActionButton(
-                                text = { Text(stringResource(id = R.string.add_task)) },
-                                icon = {
-                                    Icon(
-                                        Icons.Filled.Add,
-                                        contentDescription = stringResource(id = R.string.add_task)
-                                    )
-                                },
-                                onClick = {
-                                    navController.navigate(Screen.AddTask.route)
-                                }
-                            )
-                        }
+                                            shareLink(
+                                                context,
+                                                url = context.getString(R.string.github_URL)
+                                            )
+                                        },
+                                        modifier = Modifier
+                                            .defaultMinSize(minWidth = 165.dp, minHeight = 38.dp)
+                                    ) {
+                                        Text(
+                                            text = stringResource(id = R.string.git_button),
+                                            fontSize = 16.sp
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(18.dp))
+                                    Button(
+                                        onClick = {
+                                            // Handle klik tombol untuk menautkan ke profil GitHub
+                                            val text = context.getString(R.string.instagram_URL)
+                                            Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                                        },
+                                        modifier = Modifier
+                                            .defaultMinSize(minWidth = 165.dp, minHeight = 38.dp)
+                                    ) {
+                                        Text(
+                                            text = stringResource(id = R.string.instagram_button),
+                                            fontSize = 16.sp
+                                        )
+                                    }
 
-                    ) { padding ->
-                        Box(modifier = Modifier.padding(padding)) {
-                            NaviationGraph(navController)
+                                }
+                                Text(
+                                    text = stringResource(id = R.string.copy_right),
+                                    fontSize = 12.sp,
+                                    color = Color.Gray,
+                                    modifier = Modifier
+                                        .align(Alignment.BottomStart)
+                                        .padding(16.dp)
+                                )
+                            }
+                            Divider()
+                        }
+                    },
+                ) {
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                        Scaffold(
+                            topBar = {
+                                CenterAlignedTopAppBar(
+                                    title = { Text(stringResource(id = R.string.app_name)) },
+                                    actions = {
+                                        IconButton(onClick = {
+                                            scope.launch {
+                                                drawerState.apply { if (isClosed) open() else close() }
+                                            }
+                                        })
+                                        {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.outline_auto_awesome_mosaic_24),
+                                                contentDescription = stringResource(id = R.string.about_dev)
+                                            )
+                                        }
+                                    },
+                                    navigationIcon = {
+                                        //Niatnya dibuatkan agar bisa mendeteksi mode hp (dark/light),  kemudian jika di tekan akan merubah mode aplikasi ke dark/light, Upcoming feature
+                                        IconButton(onClick = {
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                changeTheme()
+                                            }
+                                        })
+                                        {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.dark_mode),
+                                                contentDescription = ""
+                                            )
+                                        }
+                                    }
+
+                                )
+                            },
+                            bottomBar = {
+                                NavigationBar {
+                                    bottomNavigationItems.forEach { screen ->
+                                        NavigationBarItem(
+                                            icon = {
+                                                val iconPainter =
+                                                    painterResource(id = screen.iconResId)
+                                                Icon(
+                                                    painter = iconPainter,
+                                                    contentDescription = null
+                                                )
+                                            },
+                                            label = { Text(stringResource(id = screen.textResId)) },
+                                            selected = currentRoute == screen.route,
+                                            onClick = {
+                                                navController.navigate(screen.route) {
+                                                    popUpTo(navController.graph.startDestinationId) {
+                                                        this.saveState = true
+                                                    }
+                                                    this.launchSingleTop = true
+                                                    this.restoreState = true
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                            },
+                            floatingActionButton = {
+                                ExtendedFloatingActionButton(
+                                    text = { Text(stringResource(id = R.string.add_task)) },
+                                    icon = {
+                                        Icon(
+                                            Icons.Filled.Add,
+                                            contentDescription = stringResource(id = R.string.add_task)
+                                        )
+                                    },
+                                    onClick = {
+                                        navController.navigate(Screen.AddTask.route)
+                                    }
+                                )
+                            }
+
+                        ) { padding ->
+                            Box(modifier = Modifier.padding(padding)) {
+                                NaviationGraph(navController)
+                            }
                         }
                     }
                 }
             }
-        }
 
+        }
     }
 
 }

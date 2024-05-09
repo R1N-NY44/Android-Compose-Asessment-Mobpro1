@@ -13,17 +13,14 @@ import org.d3if3062.asessment1.backend.database.MainViewModel
 import org.d3if3062.asessment1.backend.database.TodoList_DB
 import org.d3if3062.asessment1.backend.database.utils.ViewModelFactory
 import org.d3if3062.asessment1.frontend.content.HistoryTaskScreen
-import org.d3if3062.asessment1.frontend.screen.AddTaskScreen
 import org.d3if3062.asessment1.frontend.content.ListTaskScreen
+import org.d3if3062.asessment1.frontend.screen.AddTaskScreen
 import org.d3if3062.asessment1.frontend.screen.DetalsTask
 import org.d3if3062.asessment1.frontend.screen.EditTaskScreen
-//import org.d3if3062.asessment1.ui.screen.Experiment2
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NaviationGraph(navController: NavHostController = rememberNavController()/*, viewModel: MainViewModel = viewModel()*/)  {
-
+fun NaviationGraph(navController: NavHostController = rememberNavController()) {
     // Inisialisasi database dan view model
     val context = LocalContext.current
     val db = TodoList_DB.getInstance(context)
@@ -41,7 +38,6 @@ fun NaviationGraph(navController: NavHostController = rememberNavController()/*,
         }
         composable(route = Screen.History.route) {
             HistoryTaskScreen(navController, viewModel)
-            //AnimalApp()
         }
 
         /*----------------[Sub Route]----------------*/
@@ -69,7 +65,5 @@ fun NaviationGraph(navController: NavHostController = rememberNavController()/*,
                 println("Failed to get Task ID in DetailsTask route")
             }
         }
-
-
     }
 }
