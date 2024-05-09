@@ -222,7 +222,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
                                         })
                                         {
                                             Icon(
-                                                painter = painterResource(id = R.drawable.dark_mode),
+                                                painter = if(appTheme) painterResource(id = R.drawable.dark_mode) else painterResource(id = R.drawable.light_mode),
                                                 contentDescription = ""
                                             )
                                         }
