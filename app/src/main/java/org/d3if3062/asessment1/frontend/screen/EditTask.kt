@@ -44,19 +44,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.d3if3062.asessment1.R
 import org.d3if3062.asessment1.backend.database.MainViewModel
 import org.d3if3062.asessment1.frontend.component.DisplayAlertDialog
-import org.d3if3062.asessment1.frontend.theme.Asessment1Theme
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -108,7 +104,7 @@ fun EditTaskScreen(navController: NavHostController, viewModel: MainViewModel, t
             actions = {
                 DisplayAlertDialog(
                     openDialog = deleteDoneAlert,
-                    alertMessage = R.string.alert_mark_undone,
+                    alertMessage = R.string.alert_delete,
                     alertConfirmMessage = R.string.alert_yes,
                     alertDismissMessage = R.string.alert_no,
                     onDismissRequest = { deleteDoneAlert = false },
